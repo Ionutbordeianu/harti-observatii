@@ -37,6 +37,7 @@ jobs:
             arhiva_orara.json
             github_publicat.txt
             _ultima_obs.txt
+            _stare_ok.txt
           key: stare-${{ github.run_id }}
           restore-keys: stare-
       - name: Radar și observații
@@ -57,6 +58,7 @@ jobs:
             arhiva_orara.json
             github_publicat.txt
             _ultima_obs.txt
+            _stare_ok.txt
           key: stare-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Ștergerea memoriilor vechi (păstrează ultimele 3)
         if: always()
