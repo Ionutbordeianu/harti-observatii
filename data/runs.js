@@ -1,0 +1,1 @@
+window.ALARO_RUNS=[];

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Meteo România · Galați — prognoze, radar, observații</title>
+<style>
+:root{--bg:#ffffff;--panel:#f6f8fa;--line:#d9dee3;--ink:#111417;--muted:#566370;--accent:#0b7f8f;color-scheme:light;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--body);display:flex;flex-direction:column}
+nav{display:flex;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid var(--line);background:#fff;flex-wrap:wrap;box-shadow:0 1px 3px rgba(17,20,23,.06)}
+nav .brand{font-weight:600;font-size:16px;margin-right:10px;cursor:pointer;white-space:nowrap}
+nav button{background:transparent;color:var(--ink);border:1px solid transparent;border-radius:8px;padding:7px 12px;font:500 14px var(--body);cursor:pointer;white-space:nowrap}
+nav button:hover{background:#e9eef2}
+nav button[aria-current=true]{background:#dcf0f3;border-color:#9fd0d8;color:#06424b}
+nav select{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:14px var(--body)}
+nav .sp{flex:1}
+nav a{color:var(--muted);font-size:13px}
+#home{flex:1;overflow:auto;padding:24px;display:none;background:var(--panel)}
+#home h1{font:600 22px var(--body);margin:0 0 4px}#home .lead{color:var(--muted);margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;max-width:1200px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(17,20,23,.05),0 4px 14px rgba(17,20,23,.06);transition:box-shadow .15s,border-color .15s;padding:16px;cursor:pointer;display:flex;flex-direction:column;gap:8px;min-height:160px;text-align:left;color:var(--ink);font:inherit}
+.card:hover{border-color:var(--accent);box-shadow:0 2px 4px rgba(17,20,23,.06),0 8px 24px rgba(11,127,143,.14)}
+.card h2{font:600 17px var(--body);margin:0;display:flex;align-items:center;gap:8px}
+.card .ic{font-size:22px}
+.card p{margin:0;color:var(--muted);font-size:13.5px}
+.card .st{margin-top:auto;font-size:12.5px;color:#44505a;border-top:1px solid var(--line);padding-top:8px}
+.card .st b{color:var(--ink);font-weight:500}
+.models{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.models span{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:3px 8px;font-size:12.5px;cursor:pointer}
+.models span:hover{border-color:var(--accent)}
+#frame{flex:1;border:0;width:100%;display:none;background:var(--bg)}
+.help{max-width:1200px;margin-top:22px;color:var(--muted);font-size:13px}
+.help b{color:var(--ink)}
+@media (max-width:700px){nav button{padding:6px 8px;font-size:13px}#home{padding:14px}}
+</style>
+</head>
+<body>
+<nav>
+  <span class="brand" id="brand">☁ Meteo</span>
+  <button data-v="home">Acasă</button>
+  <button data-v="prog">Prognoze</button>
+  <select id="model" aria-label="Modelul de prognoză">
+    <option value="aladin">ALADIN 2,3 km</option><option value="alaro">ALARO-4</option><option value="icon">ICON (EU + global, 180 h)</option><option value="ecmwf">ECMWF (240 h)</option>
+  </select>
+  <button data-v="cmp">Comparare modele</button>
+  <button data-v="radar">Radar Galați</button>
+  <button data-v="obs">Observații ANM</button>
+  <span class="sp"></span>
+  <a id="newtab" href="#" target="_blank" rel="noopener" title="Deschide pagina curentă separat">↗ fereastră nouă</a>
+</nav>
+<main id="home">
+  <h1>Prognoze, radar și observații — România, cu accent pe Galați</h1>
+  <p class="lead">Alege ce vrei să vezi. Toate se actualizează automat.</p>
+  <div class="grid">
+    <button class="card" data-v="prog"><h2><span class="ic">🗺</span>Prognoze pe modele</h2>
+      <p>Hărți cu temperatură, precipitații, vânt, nori, ninsoare și altitudine, pe relieful de 2,3 km. La click: meteogramă și sondaj aerologic (Skew-T).</p>
+      <div class="models"><span data-m="aladin">ALADIN</span><span data-m="alaro">ALARO-4</span><span data-m="icon">ICON</span><span data-m="ecmwf">ECMWF</span></div>
+      <div class="st" id="st-prog">Se verifică rulările…</div></button>
+    <button class="card" data-v="cmp"><h2><span class="ic">⧉</span>Comparare modele</h2>
+      <p>1–4 hărți sincronizate: aceleași ore, același parametru; rulări diferite pentru a vedea cum s-a schimbat prognoza; comparare cu valorile măsurate ANM.</p>
+      <div class="st">Butonul „Evoluția prognozei” arată ultimele 4 rulări ale aceluiași model.</div></button>
+    <button class="card" data-v="radar"><h2><span class="ic">📡</span>Radar Galați</h2>
+      <p>Radarele Medgidia, Bârnova și București, la 5 minute, rază 250 km: reflectivitate, intensitate, cumuluri corectate cu pluviometrele ANM, tip la sol, clasificare polarimetrică, Doppler; temperatura, rafala și riscurile acum; prognoză 0–6 h (radar îmbinat cu modelele).</p>
+      <div class="st" id="st-radar">Se citește ultimul buletin…</div></button>
+    <button class="card" data-v="obs"><h2><span class="ic">🌡</span>Observații ANM</h2>
+      <p>Valori măsurate: temperatură, vânt, rafale, precipitații orare (radar + pluviometre), maxime/minime și precipitații pe 24 h, ultimele 10 zile.</p>
+      <div class="st" id="st-obs">Se verifică datele…</div></button>
+  </div>
+  <div class="help"><b>Sfaturi:</b> în hărți, mouse-ul arată valoarea, click dreapta toate valorile din punct, click meteograma. Săgeata ⯇ ascunde panourile pentru hartă pe tot ecranul. Linkul „↗ fereastră nouă” deschide pagina curentă separat (util pe telefon). Date: ANM, ČHMÚ, DWD, ECMWF (licențe deschise), prin Open-Meteo și portalul de date deschise ANM.</div>
+</main>
+<iframe id="frame" title="Conținut" allow="fullscreen"></iframe>
+<script>
+const LOCAL=location.protocol==='file:';
+const W='https://ionutbordeianu.github.io/';
+const URLS={
+ aladin:LOCAL?'../HartiAladin4/index.html':W+'harti-aladin/',
+ alaro:LOCAL?'../HartiALARO4/index.html':W+'harti-meteo/',
+ icon:LOCAL?'../HartiICON/index.html':W+'harti-icon/',
+ ecmwf:LOCAL?'../HartiECMWF/index.html':W+'harti-ecmwf/',
+ cmp:LOCAL?'../HartiAladin4/comparare.html':W+'harti-aladin/comparare.html',
+ radar:LOCAL?'radar.html':W+'harti-observatii/radar.html',
+ obs:LOCAL?'index.html':W+'harti-observatii/'};
+const home=document.getElementById('home'),frame=document.getElementById('frame'),msel=document.getElementById('model'),nt=document.getElementById('newtab');
+try{const m=localStorage.getItem('portalModel');if(m&&URLS[m])msel.value=m}catch(e){}
+function go(v,push){if(!v||!(v==='home'||v==='prog'||URLS[v]))v='home';
+ document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.v===v));
+ if(v==='home'){home.style.display='block';frame.style.display='none';frame.src='about:blank';nt.style.visibility='hidden'}
+ else{const u=v==='prog'?URLS[msel.value]:URLS[v];home.style.display='none';frame.style.display='block';if(frame.dataset.u!==u){frame.src=u;frame.dataset.u=u}nt.href=u;nt.style.visibility='visible'}
+ if(v==='home')frame.dataset.u='';
+ const h=v==='prog'?'prog-'+msel.value:v;if(push!==false&&location.hash.slice(1)!==h)history.pushState(null,'','#'+h)}
+document.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',e=>{if(e.target.closest('[data-m]'))return;go(b.dataset.v)}));
+document.querySelectorAll('[data-m]').forEach(s=>s.addEventListener('click',e=>{e.stopPropagation();msel.value=s.dataset.m;msel.onchange()}));
+msel.onchange=()=>{try{localStorage.setItem('portalModel',msel.value)}catch(e){}go('prog')};
+document.getElementById('brand').onclick=()=>go('home');
+function fromHash(){const h=location.hash.slice(1);if(h.startsWith('prog-')){const m=h.slice(5);if(URLS[m])msel.value=m;go('prog',false)}else go(h||'home',false)}
+window.addEventListener('popstate',fromHash);fromHash();
+// starea curentă pe carduri (aceeași origine: github.io)
+const fmt=new Intl.DateTimeFormat('ro-RO',{timeZone:'Europe/Bucharest',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+function loadJS(u){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=u+(u.includes('?')?'&':'?')+'t='+Date.now();s.onload=()=>{s.remove();res()};s.onerror=()=>{s.remove();rej()};document.head.appendChild(s)})}
+(async()=>{if(LOCAL)return;
+ try{await loadJS(W+'harti-observatii/radar/frames.js');const R=window.RADAR_STATE;const f=R.frames[R.frames.length-1];
+  document.getElementById('st-radar').innerHTML='<b>'+fmt.format(new Date(f.t))+'</b> · '+(f.lines[0]||'')}catch(e){document.getElementById('st-radar').textContent='Buletinul nu poate fi citit acum.'}
+ try{await loadJS(W+'harti-observatii/data/meta.js');const M=window.ALARO_META;document.getElementById('st-obs').innerHTML='Actualizat <b>'+fmt.format(new Date(M.updated))+'</b> · zile: '+M.days[0].slice(8)+'.'+M.days[0].slice(5,7)+' – '+M.days[M.days.length-1].slice(8)+'.'+M.days[M.days.length-1].slice(5,7)}catch(e){document.getElementById('st-obs').textContent='Datele nu pot fi citite acum.'}
+ const names={aladin:['ALADIN','harti-aladin'],alaro:['ALARO','harti-meteo'],icon:['ICON','harti-icon'],ecmwf:['ECMWF','harti-ecmwf']};const out=[];
+ for(const [k,[n,repo]] of Object.entries(names)){try{window.ALARO_RUNS=null;await loadJS(W+repo+'/data/runs.js');const r=(window.ALARO_RUNS||[])[0];if(r)out.push(n+' <b>'+r.run.slice(6,8)+'.'+r.run.slice(4,6)+' '+r.run.slice(8,10)+' UTC</b> (+'+r.h1+'h)')}catch(e){out.push(n+' –')}}
+ document.getElementById('st-prog').innerHTML='Ultimele rulări: '+out.join(' · ')})();
+</script>
+</body>
+</html>
